@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "りんがぽる太",
+  "version": "1.0",
+  "description": "linguaportaの成美堂の問題を解くための拡張機能です。",
+  "permissions": ["activeTab", "scripting", "tabs", "declarativeNetRequest"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.linguaporta.jp/user/seibido/*"],
+      "js": ["content/content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icon/16.png",
+      "48": "icon/48.png",
+      "128": "icon/128.png"
+    }
+  },
+  "icons": {
+    "16": "icon/16.png",
+    "48": "icon/48.png",
+    "128": "icon/128.png"
+  }
+}

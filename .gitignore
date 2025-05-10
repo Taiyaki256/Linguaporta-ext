@@ -1,0 +1,26 @@
+# Node.js dependencies
+/node_modules
+
+# Build artifacts
+/dist
+/build
+
+# Packaged extension files
+*.crx
+*.zip
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+
+# Editor directories and files
+.vscode/
+
+# Generated files by this project
+_metadata/generated_indexed_rulesets/
