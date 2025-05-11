@@ -5,6 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const resultArea = document.getElementById("resultArea");
   const answerButton = document.getElementById("answerButton"); // 追加
   const nextProblemButton = document.getElementById("nextProblemButton"); // 追加
+  const unitField = document.getElementById("unitField");
+  const categoryField = document.getElementById("categoryField");
+  const saveDataButton = document.getElementById("saveDataButton");
+  const saveStatusArea = document.getElementById("saveStatusArea");
 
   submitButton.addEventListener("click", function () {
     const userInput = inputField.value;
@@ -70,5 +74,26 @@ document.addEventListener("DOMContentLoaded", function () {
   // 次の問題ボタンのクリックリスナー
   nextProblemButton.addEventListener("click", function () {
     navigateTabWithAction("次の問題");
+  });
+
+  saveDataButton.addEventListener("click", function () {
+    const unit = unitField.value;
+    const category = categoryField.value;
+    const dataToSave = {}; // ここに保存したいデータを入れます
+
+    if (unit && category) {
+      const key = `${unit}/${category}/data.json`;
+      chrome.storage.local.set({ [key]: dataToSave }, function () {
+        if (chrome.runtime.lastError) {
+          saveStatusArea.textContent = "Error saving data: " + chrome.runtime.lastError.message;
+          console.error("Error saving data:", chrome.runtime.lastError.message);
+        } else {
+          saveStatusArea.textContent = `Data saved successfully as ${key}!`;
+          console.log("Data saved successfully as", key);
+        }
+      });
+    } else {
+      saveStatusArea.textContent = "Please enter both unit and category.";
+    }
   });
 });

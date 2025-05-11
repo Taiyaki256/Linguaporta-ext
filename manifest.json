@@ -3,7 +3,13 @@
   "name": "りんがぽる太",
   "version": "1.0",
   "description": "linguaportaの成美堂の問題を解くための拡張機能です。",
-  "permissions": ["activeTab", "scripting", "tabs", "declarativeNetRequest"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "declarativeNetRequest",
+    "storage"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -19,7 +25,7 @@
   "content_scripts": [
     {
       "matches": ["https://*.linguaporta.jp/user/seibido/*"],
-      "js": ["content/content.js"]
+      "js": ["lib/storageUtils.js", "content/content.js"]
     }
   ],
   "action": {
