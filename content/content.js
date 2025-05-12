@@ -22,11 +22,10 @@ function createInPageButton(text, id, actionValue) {
       console.log("checkボタンがクリックされました。");
       let data = {};
       try {
-        // loadDataの第一引数を抽出したユニット番号に変更
-        const storedData = await loadData(unitNumber, category);
-        console.log(storedData);
+        const storedData = await window.storageUtils.loadData(unitNumber, category);
+        console.log("保存されたデータ:", storedData);
         if (storedData) {
-          data = JSON.parse(storedData);
+          data = storedData;
           console.log("保存されたデータ:", data);
         } else {
           console.log("保存されたデータはありません。");
@@ -50,16 +49,14 @@ function createInPageButton(text, id, actionValue) {
     fetch(postUrl, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded", // JSONではなく、フォームデータとして指定
-        // 必要に応じて他のヘッダー（CSRFトークンなど）を追加
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: payload, // payload は既にURLエンコードされた文字列
+      body: payload,
     })
       .then((response) => {
         if (response.ok) {
           console.log("Payload sent successfully.");
           return response.text().then((html) => {
-            // ドキュメント全体のHTMLを置き換える
             document.documentElement.innerHTML = html;
             dash();
             main();
@@ -140,7 +137,7 @@ async function main() {
   if (titleElements && titleElements.length > 0) {
     titleElements.forEach((element) => {
       const innerHTML = element.innerHTML;
-      const match = innerHTML.match(/Unit\s*(\d+)/i); // "Unit" に続く数字を抽出 (大文字・小文字を区別しない)
+      const match = innerHTML.match(/Unit\s*(\d+)/i);
       if (match && match[1]) {
         unitNumber = match[1];
         console.log("抽出されたユニット番号:", unitNumber);
@@ -155,7 +152,6 @@ async function main() {
   const questionNumberElement = document.getElementById("question_td");
   if (questionNumberElement) {
     const questionNumberText = questionNumberElement.innerHTML;
-    // 「問題番号：」の後に続く数字を抽出する正規表現に変更
     const match = questionNumberText.match(/問題番号：(\d+)/);
     if (match && match[1]) {
       questionNumber = match[1];
@@ -169,11 +165,10 @@ async function main() {
 
   let data = {};
   try {
-    // loadDataの第一引数を抽出したユニット番号に変更
-    const storedData = await loadData(unitNumber, category);
-    console.log(storedData);
+    const storedData = await window.storageUtils.loadData(unitNumber, category);
+    console.log("保存されたデータ:", storedData);
     if (storedData) {
-      data = JSON.parse(storedData);
+      data = storedData;
       console.log("保存されたデータ:", data);
     } else {
       console.log("保存されたデータはありません。");
@@ -183,11 +178,9 @@ async function main() {
   }
 
   if (consoleDiv) {
-    // console div
     const unitInfo = document.createElement("p");
     unitInfo.innerText = `ユニット番号: ${unitNumber}, カテゴリ: ${category}, 問題番号: ${questionNumber}`;
     consoleDiv.appendChild(unitInfo);
-    // dataのunitNumberに基づいて、data["q" + questionNumber]が存在する場合はその内容を表示
     if (data["q" + questionNumber]) {
       const dataInfo = document.createElement("p");
       dataInfo.innerText = `保存されたデータ: ${JSON.stringify(
@@ -201,24 +194,19 @@ async function main() {
     }
   }
 
-  // class: qu03が存在する場合
   const qu03Element = document.querySelector(".qu03");
   if (qu03Element) {
     const qu03Data = qu03Element.innerHTML;
-    // <br>削除 \n 削除
     let cleanedData = qu03Data.replaceAll(/<br>/g, "");
     cleanedData = cleanedData.replaceAll(/\n/g, "");
     cleanedData = cleanedData.replaceAll(/<[^>]+>/g, "<>");
     cleanedData = cleanedData.replaceAll(/&nbsp;/g, "");
-    // value属性の値を抽出する正規表現
     const valueRegex = /value="([^"]*)"/g;
     let matches;
     const answers = [];
     while ((matches = valueRegex.exec(qu03Data)) !== null) {
-      // 最初と最後の空白を消す
       answers.push(matches[1].trim());
     }
-    // soundのsrcを抽出する正規表現
     const soundElement = document.getElementById("sound");
     const soundSrc = soundElement ? soundElement.getAttribute("src") : null;
     let url = null;
@@ -236,8 +224,7 @@ async function main() {
       Answers: answers,
       Sound: url,
     };
-    // saveDataの第一引数を抽出したユニット番号に変更
-    saveData(unitNumber, category, data);
+    await window.storageUtils.saveData(unitNumber, category, data);
   } else {
     console.log("qu03要素は見つかりませんでした。");
   }
