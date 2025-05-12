@@ -217,12 +217,24 @@ async function main() {
       console.log("音声ファイルは見つかりませんでした。");
     }
 
+    // id commentaryのテキストを取得
+    const commentaryElement = document.getElementById("commentary");
+    let comment = "";
+    if (commentaryElement) {
+      comment = commentaryElement.innerText;
+    }
+
+
+    
+
+
     console.log("本文:", cleanedData);
     console.log("答え:", answers);
     data["q" + questionNumber] = {
       Text: cleanedData,
       Answers: answers,
       Sound: url,
+      Comment: comment
     };
     await window.storageUtils.saveData(unitNumber, category, data);
   } else {
