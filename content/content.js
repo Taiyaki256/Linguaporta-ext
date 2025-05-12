@@ -147,6 +147,8 @@ async function main() {
       }
       if (innerHTML.includes("音声を聞いて書き取り")) {
         category = "dictation";
+      } else if (innerHTML.includes("空所補充")) {
+        category = "fill-in-the-blank";
       }
     });
   }
@@ -159,6 +161,10 @@ async function main() {
       questionNumber = match[1];
       console.log("抽出された問題番号:", questionNumber);
     }
+  }
+
+  if (category == "default-category") {
+    return;
   }
 
   let data = {};
