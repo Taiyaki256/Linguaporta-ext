@@ -83,8 +83,28 @@ function getData(unitNumber, category) {
   return null;
 }
 
+// CORSヘッダーを設定する関数
+function setCorsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "https://w1.linguaporta.jp",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "3600",
+    "Access-Control-Allow-Credentials": "true",
+  };
+}
+
 // Web APIとして公開する関数
 function doGet(e) {
+  const headers = setCorsHeaders();
+
+  // プリフライトリクエストへの対応
+  if (e.method === "OPTIONS") {
+    return ContentService.createTextOutput("")
+      .setMimeType(ContentService.MimeType.TEXT)
+      .setHeaders(headers);
+  }
+
   const action = e.parameter.action;
   const unitNumber = e.parameter.unitNumber;
   const category = e.parameter.category;
@@ -98,7 +118,58 @@ function doGet(e) {
     result = getData(unitNumber, category);
   }
 
-  return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(
-    ContentService.MimeType.JSON
-  );
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeaders(headers);
+}
+
+// POSTリクエストに対応する関数
+function doPost(e) {
+  const headers = setCorsHeaders();
+
+  // プリフライトリクエストへの対応
+  if (e.method === "OPTIONS") {
+    return ContentService.createTextOutput("")
+      .setMimeType(ContentService.MimeType.TEXT)
+      .setHeaders(headers);
+  }
+
+  // POSTデータの取得
+  const postData = e.postData.contents;
+  let params;
+
+  try {
+    // URLSearchParams形式のデータをパース
+    const searchParams = new URLSearchParams(postData);
+    params = {
+      action: searchParams.get("action"),
+      unitNumber: searchParams.get("unitNumber"),
+      category: searchParams.get("category"),
+      data: searchParams.get("data"),
+    };
+  } catch (error) {
+    console.error("POSTデータのパースに失敗:", error);
+    return ContentService.createTextOutput(
+      JSON.stringify({ error: "Invalid request data" })
+    )
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(headers);
+  }
+
+  const action = params.action;
+  const unitNumber = params.unitNumber;
+  const category = params.category;
+  const data = params.data;
+
+  let result;
+
+  if (action === "save") {
+    result = saveData(unitNumber, category, JSON.parse(data));
+  } else if (action === "get") {
+    result = getData(unitNumber, category);
+  }
+
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeaders(headers);
 }
