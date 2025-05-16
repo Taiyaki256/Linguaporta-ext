@@ -427,7 +427,7 @@ async function main() {
     console.log("qu03要素は見つかりませんでした。");
   }
   const drillform = document.getElementById("drill_form");
-  if (drillform) {
+  if (drillform && category == "word-meaning") {
     // 中にinputがあれば sequence = 0 なければ sequence = 1
     const input = drillform.querySelector("input");
     if (input) {
