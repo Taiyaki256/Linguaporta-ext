@@ -438,7 +438,10 @@ async function main() {
       console.log("drillformにinputが見つかりませんでした。");
       questionSequence = 1;
       // drillformのinnerHTMLの 正解：以降のテキストを取得
-      const correctAnswer = drillform.innerHTML.match(/正解：(.*)/)[1];
+      let correctAnswer = drillform.innerHTML.match(/正解：(.*)/)[1];
+      // nbspとタグを削除
+      correctAnswer = correctAnswer.replaceAll(/&nbsp;/g, "");
+      correctAnswer = correctAnswer.replaceAll(/<[^>]+>/g, "");
       console.log("正解:", correctAnswer);
       let Text = "";
       const qu02Element = document.getElementById("qu02");
