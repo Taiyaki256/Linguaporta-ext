@@ -434,7 +434,8 @@ async function main() {
       questionSequence = 0;
       // for="answer_0_0" の label を取得
       const label = document.querySelector('label[for="answer_0_0"]');
-    } else {
+      // 解答：が含まれる場合スキップ
+    } else if (drillform.innerHTML.includes("解答：") == false) {
       console.log("drillformにinputが見つかりませんでした。");
       questionSequence = 1;
       // drillformのinnerHTMLの 正解：以降のテキストを取得
